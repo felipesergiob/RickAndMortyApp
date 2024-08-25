@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/launchScreenFragment">
+
+    <fragment
+        android:id="@+id/launchScreenFragment"
+        android:name="com.example.rickandmortyapp.presentation.view.fragment.LaunchScreenFragment"
+        tools:layout="@layout/fragment_launch_screen">
+        <action
+            android:id="@+id/action_launchScreenFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.rickandmortyapp.presentation.view.fragment.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment">
+            <argument
+                android:name="characterId"
+                app:argType="integer" />
+        </action>
+        <!-- Adicionando a navegação para o FavoritesFragment -->
+        <action
+            android:id="@+id/action_homeFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.rickandmortyapp.presentation.view.fragment.DetailFragment"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="characterId"
+            app:argType="integer" />
+    </fragment>
+
+    <!-- Definindo o fragmento de favoritos -->
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.rickandmortyapp.presentation.view.fragment.FavoritesFragment"
+        tools:layout="@layout/fragment_favorites" />
+
+</navigation>
