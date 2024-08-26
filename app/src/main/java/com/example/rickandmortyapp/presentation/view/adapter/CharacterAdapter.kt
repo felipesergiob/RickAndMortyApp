@@ -16,83 +16,73 @@ class CharacterAdapter(
     private val onItemClick: ((Character) -> Unit)? = null,
     private val allowFavoriteToggle: Boolean = true,
     private val isFavoriteView: Boolean = false
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<CharacterAdapter.CharacterViewHolder>() {
 
-    private val VIEW_TYPE_DEFAULT = 1
-    private val VIEW_TYPE_FAVORITE = 2
-
-    override fun getItemViewType(position: Int): Int {
-        return if (isFavoriteView) VIEW_TYPE_FAVORITE else VIEW_TYPE_DEFAULT
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_TYPE_FAVORITE) {
-            val binding = ItemFavoriteCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            FavoriteViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = if (isFavoriteView) {
+            ItemFavoriteCharacterBinding.inflate(layoutInflater, parent, false)
         } else {
-            val binding = ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            DefaultViewHolder(binding)
+            ItemCharacterBinding.inflate(layoutInflater, parent, false)
         }
+        return CharacterViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val character = characters[position]
-        if (holder is FavoriteViewHolder) {
-            holder.bind(character)
-        } else if (holder is DefaultViewHolder) {
-            holder.bind(character)
-        }
+    override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
+        holder.bind(characters[position])
     }
 
     override fun getItemCount() = characters.size
 
-    inner class DefaultViewHolder(private val binding: ItemCharacterBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CharacterViewHolder(
+        private val binding: Any
+    ) : RecyclerView.ViewHolder(
+        if (binding is ItemCharacterBinding) binding.root else (binding as ItemFavoriteCharacterBinding).root
+    ) {
         fun bind(character: Character) {
-            binding.characterName.text = character.name
-            binding.characterSpecies.text = character.species
+            if (binding is ItemCharacterBinding) {
+                binding.characterName.text = character.name
+                binding.characterSpecies.text = character.species
 
-            Glide.with(binding.root)
-                .load(character.image)
-                .into(binding.characterImage)
+                Glide.with(binding.root)
+                    .load(character.image)
+                    .into(binding.characterImage)
 
-            val isFavorite = favoritesViewModel.isFavorite(character)
-            val starResId = if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_empty
-            binding.starIcon.setImageResource(starResId)
+                val isFavorite = favoritesViewModel.isFavorite(character)
+                val starResId = if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_empty
+                binding.starIcon.setImageResource(starResId)
 
-            binding.root.setOnClickListener {
-                onItemClick?.invoke(character)
-            }
+                binding.root.setOnClickListener {
+                    onItemClick?.invoke(character)
+                }
 
-            if (allowFavoriteToggle) {
-                binding.starIcon.setOnClickListener {
-                    if (isFavorite) {
-                        favoritesViewModel.removeFromFavorites(character)
-                        binding.starIcon.setImageResource(R.drawable.ic_star_empty)
-                    } else {
-                        favoritesViewModel.addToFavorites(character)
-                        binding.starIcon.setImageResource(R.drawable.ic_star)
+                if (allowFavoriteToggle) {
+                    binding.starIcon.setOnClickListener {
+                        if (isFavorite) {
+                            favoritesViewModel.removeFromFavorites(character)
+                            binding.starIcon.setImageResource(R.drawable.ic_star_empty)
+                        } else {
+                            favoritesViewModel.addToFavorites(character)
+                            binding.starIcon.setImageResource(R.drawable.ic_star)
+                        }
                     }
                 }
-            }
-        }
-    }
+            } else if (binding is ItemFavoriteCharacterBinding) {
+                binding.favoriteCharacterName.text = character.name
+                binding.favoriteCharacterSpecies.text = character.species
 
-    inner class FavoriteViewHolder(private val binding: ItemFavoriteCharacterBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(character: Character) {
-            binding.favoriteCharacterName.text = character.name
-            binding.favoriteCharacterSpecies.text = character.species
+                Glide.with(binding.root)
+                    .load(character.image)
+                    .into(binding.favoriteCharacterImage)
 
-            Glide.with(binding.root)
-                .load(character.image)
-                .into(binding.favoriteCharacterImage)
+                binding.root.setOnClickListener {
+                    onItemClick?.invoke(character)
+                }
 
-            binding.root.setOnClickListener {
-                onItemClick?.invoke(character)
-            }
-
-            binding.favoriteStarIcon.setOnClickListener {
-                favoritesViewModel.removeFromFavorites(character)
-                notifyItemRemoved(adapterPosition)
+                binding.favoriteStarIcon.setOnClickListener {
+                    favoritesViewModel.removeFromFavorites(character)
+                    notifyItemRemoved(adapterPosition)
+                }
             }
         }
     }

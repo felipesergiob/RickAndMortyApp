@@ -5,18 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rickandmortyapp.databinding.FragmentHomeBinding
-import com.example.rickandmortyapp.viewmodel.FavoritesViewModel
-import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.viewmodel.CharacterViewModel
+import com.example.rickandmortyapp.viewmodel.FavoritesViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class HomeFragment : Fragment() {
 
-    private val characterViewModel: CharacterViewModel by activityViewModels()
-    private val favoritesViewModel: FavoritesViewModel by activityViewModels()
+    private val characterViewModel: CharacterViewModel by sharedViewModel()
+    private val favoritesViewModel: FavoritesViewModel by sharedViewModel()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -34,16 +33,20 @@ class HomeFragment : Fragment() {
         binding.characterRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
         binding.starImageView.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
+            findNavController().navigate(com.example.rickandmortyapp.R.id.action_homeFragment_to_favoritesFragment)
         }
 
         characterViewModel.charactersList.observe(viewLifecycleOwner) { characters ->
-            binding.characterRecyclerView.adapter = CharacterAdapter(characters, favoritesViewModel, { character ->
-                val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(character.id.toInt())
-                findNavController().navigate(action)
-            }, allowFavoriteToggle = false)
+            binding.characterRecyclerView.adapter = CharacterAdapter(
+                characters,
+                favoritesViewModel,
+                onItemClick = { character ->
+                    val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(character.id.toInt())
+                    findNavController().navigate(action)
+                },
+                allowFavoriteToggle = false
+            )
         }
-
 
         characterViewModel.fetchAllCharacters()
     }

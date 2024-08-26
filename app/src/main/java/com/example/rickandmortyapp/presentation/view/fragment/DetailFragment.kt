@@ -5,19 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.databinding.FragmentDetailBinding
 import com.example.rickandmortyapp.viewmodel.CharacterViewModel
 import com.example.rickandmortyapp.viewmodel.FavoritesViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import androidx.navigation.fragment.navArgs
 
 class DetailFragment : Fragment() {
 
-    private val characterViewModel: CharacterViewModel by activityViewModels()
-    private val favoritesViewModel: FavoritesViewModel by activityViewModels()
+    private val characterViewModel: CharacterViewModel by sharedViewModel()
+    private val favoritesViewModel: FavoritesViewModel by sharedViewModel()
     private val args: DetailFragmentArgs by navArgs()
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
@@ -70,9 +70,9 @@ class DetailFragment : Fragment() {
 
     private fun updateStarIcon(character: com.example.rickandmortyapp.domain.model.Character) {
         val starResId = if (favoritesViewModel.isFavorite(character)) {
-            R.drawable.ic_star // Imagem verde
+            R.drawable.ic_star
         } else {
-            R.drawable.ic_star_empty // Imagem vazia
+            R.drawable.ic_star_empty
         }
         binding.starImageView.setImageResource(starResId)
     }

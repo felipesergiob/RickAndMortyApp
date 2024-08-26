@@ -7,10 +7,6 @@
     android:background="@drawable/background_star_field"
     tools:context=".presentation.view.fragment.FavoritesFragment">
 
-    <!-- Botão de Voltar -->
-
-    <!-- Logo -->
-
     <ImageView
         android:id="@+id/backButton"
         android:layout_width="32dp"
@@ -34,7 +30,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- RecyclerView para os personagens favoritos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favoritesRecyclerView"
         android:layout_width="0dp"

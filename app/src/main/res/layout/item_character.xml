@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Imagem do personagem com bordas arredondadas -->
         <ImageView
             android:id="@+id/characterImage"
             android:layout_width="match_parent"
@@ -23,7 +22,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <!-- Fundo preto com nome e espécie -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/textContainer"
             android:layout_width="match_parent"
@@ -34,7 +32,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Estrela verde -->
             <ImageView
                 android:id="@+id/starIcon"
                 android:layout_width="24dp"
@@ -44,27 +41,25 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Nome do personagem -->
             <TextView
                 android:id="@+id/characterName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-            android:layout_marginEnd="4dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@android:color/holo_green_light"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/starIcon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="Rick Sanchez" />
+                android:layout_marginEnd="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@android:color/holo_green_light"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/starIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Rick Sanchez" />
 
-            <!-- Espécie do personagem -->
             <TextView
                 android:id="@+id/characterSpecies"
                 android:layout_width="0dp"

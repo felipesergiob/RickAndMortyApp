@@ -1,29 +1,26 @@
 package com.example.rickandmortyapp.presentation.view.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmortyapp.databinding.FragmentFavoritesBinding
 import com.example.rickandmortyapp.view.CharacterAdapter
 import com.example.rickandmortyapp.viewmodel.FavoritesViewModel
-import com.example.rickandmortyapp.domain.model.Character // Certifique-se de que esta é a classe correta!
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class FavoritesFragment : Fragment() {
 
-    private val favoritesViewModel: FavoritesViewModel by activityViewModels()
+    private val favoritesViewModel: FavoritesViewModel by sharedViewModel()
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
     override fun onStart() {
         super.onStart()
         favoritesViewModel.loadFavorites()
-        Log.i("FavoritesFragment", "Chamado")
     }
 
     override fun onCreateView(
@@ -41,7 +38,7 @@ class FavoritesFragment : Fragment() {
 
         favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
             binding.favoritesRecyclerView.adapter = CharacterAdapter(
-                favorites as List<com.example.rickandmortyapp.domain.model.Character>, // Certifique-se de que esta conversão está utilizando a classe correta
+                favorites,
                 favoritesViewModel,
                 allowFavoriteToggle = false,
                 isFavoriteView = true

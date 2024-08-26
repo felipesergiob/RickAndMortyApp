@@ -24,6 +24,6 @@ val appModule = module {
     single<RemoteDataRepository> { RemoteDataRepositoryImpl(get()) }
     factory { GetCharactersUseCase(get()) }
 
-    viewModel { CharacterViewModel() }
+    viewModel { CharacterViewModel(get()) }
     viewModel { FavoritesViewModel(get()) }
 }

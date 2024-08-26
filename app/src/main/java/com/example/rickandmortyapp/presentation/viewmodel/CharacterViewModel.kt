@@ -8,7 +8,6 @@ import com.example.rickandmortyapp.data.model.CharacterDTO
 import com.example.rickandmortyapp.domain.model.Character
 import com.example.rickandmortyapp.domain.model.Location
 import com.example.rickandmortyapp.domain.model.Origin
-import com.example.rickandmortyapp.service.ApiClient
 import com.example.rickandmortyapp.service.RickAndMortyService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,17 +16,15 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Date
 
-class CharacterViewModel : ViewModel() {
+class CharacterViewModel(
+    private val service: RickAndMortyService
+) : ViewModel() {
 
     private val _characterData = MutableLiveData<Character>()
     val characterData: LiveData<Character> get() = _characterData
 
     private val _charactersList = MutableLiveData<List<Character>>()
     val charactersList: LiveData<List<Character>> get() = _charactersList
-
-    private val service: RickAndMortyService by lazy {
-        ApiClient.retrofit.create(RickAndMortyService::class.java)
-    }
 
     fun fetchCharacterData(characterId: Int) {
         viewModelScope.launch {
