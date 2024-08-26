@@ -1,7 +1,6 @@
 package com.example.rickandmortyapp.presentation.view.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import com.example.rickandmortyapp.presentation.view.adapter.CharacterAdapter
 import com.example.rickandmortyapp.presentation.viewmodel.CharacterViewModel
 import com.example.rickandmortyapp.presentation.viewmodel.FavoritesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.example.rickandmortyapp.domain.model.Character
 
 class HomeFragment : Fragment() {
 
@@ -21,7 +21,7 @@ class HomeFragment : Fragment() {
     private val favoritesViewModel: FavoritesViewModel by viewModel()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var newCharacterAdapter:CharacterAdapter
+    private lateinit var characterAdapter: CharacterAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,38 +34,42 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Log do estado inicial dos favoritos
-        favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-            Log.d("HomeFragment", "Init: Current favorites: ${favorites.map { it.name }}")
+        characterAdapter = CharacterAdapter(
+            characters = emptyList(),
+            favoritesViewModel = favoritesViewModel,
+            onItemClick = { character ->
+                val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(character.id)
+                findNavController().navigate(action)
+            }
+        )
+        binding.characterRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.characterRecyclerView.adapter = characterAdapter
+
+        // Observe list of characters
+        characterViewModel.charactersList.observe(viewLifecycleOwner) { characters ->
+            updateCharacterList(characters)
         }
 
-        binding.characterRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        // Observe list of favorites
+        favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
+            updateCharacterList(characterViewModel.charactersList.value ?: emptyList())
+        }
 
         binding.starImageView.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_favoritesFragment)
         }
 
-        characterViewModel.charactersList.observe(viewLifecycleOwner) { characters ->
-            favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-                val updatedCharacters = characters.map { character ->
-                    character.copy(isFavorite = favorites.any { it.id == character.id })
-                }
-                newCharacterAdapter = CharacterAdapter(
-                    updatedCharacters,
-                    favoritesViewModel,
-                    { character ->
-                        val action =
-                            HomeFragmentDirections.actionHomeFragmentToDetailFragment(character.id)
-                        findNavController().navigate(action)
-                    }
-                )
-                binding.characterRecyclerView.adapter = newCharacterAdapter
-            }
-        }
-        newCharacterAdapter.updateCharacterList(characterViewModel.charactersList)
         characterViewModel.fetchAllCharacters()
+        characterAdapter.notifyDataSetChanged()
     }
 
+    private fun updateCharacterList(characters: List<Character>) {
+        val favorites = favoritesViewModel.favorites.value ?: emptyList()
+        val updatedCharacters = characters.map { character ->
+            character.copy(isFavorite = favorites.any { it.id == character.id })
+        }
+        characterAdapter.updateCharacterList(updatedCharacters)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

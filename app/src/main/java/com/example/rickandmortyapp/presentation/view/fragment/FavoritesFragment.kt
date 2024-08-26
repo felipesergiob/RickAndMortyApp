@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.databinding.FragmentFavoritesBinding
 import com.example.rickandmortyapp.presentation.view.adapter.CharacterAdapter
 import com.example.rickandmortyapp.presentation.viewmodel.FavoritesViewModel
@@ -19,6 +18,12 @@ class FavoritesFragment : Fragment() {
     private val favoritesViewModel: FavoritesViewModel by activityViewModels()
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
+
+    override fun onStart() {
+        super.onStart()
+        favoritesViewModel.loadFavorites()
+        Log.i("FavoritesFragment", "Chamado")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

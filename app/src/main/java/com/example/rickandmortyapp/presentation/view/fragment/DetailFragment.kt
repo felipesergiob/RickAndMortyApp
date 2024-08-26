@@ -14,6 +14,8 @@ import com.example.rickandmortyapp.databinding.FragmentDetailBinding
 import com.example.rickandmortyapp.presentation.viewmodel.CharacterViewModel
 import com.example.rickandmortyapp.presentation.viewmodel.FavoritesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.example.rickandmortyapp.domain.model.Character
+
 
 class DetailFragment : Fragment() {
 
@@ -34,11 +36,6 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Log do estado inicial dos favoritos
-        favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-            Log.d("DetailFragment", "Init: Current favorites: ${favorites.map { it.name }}")
-        }
-
         characterViewModel.characterData.observe(viewLifecycleOwner) { character ->
             character?.let {
                 binding.nameTextView.text = character.name
@@ -53,7 +50,7 @@ class DetailFragment : Fragment() {
                     .load(character.image)
                     .into(binding.characterImageView)
 
-                updateStarIcon(it)
+                updateStarIcon(character)
 
                 binding.starImageView.setOnClickListener {
                     if (favoritesViewModel.isFavorite(character)) {
@@ -68,14 +65,14 @@ class DetailFragment : Fragment() {
         }
 
         binding.backButton.setOnClickListener {
+            // Navega de volta para o HomeFragment
             findNavController().navigateUp()
         }
 
         characterViewModel.fetchCharacterData(args.characterId)
     }
 
-
-    private fun updateStarIcon(character: com.example.rickandmortyapp.domain.model.Character) {
+    private fun updateStarIcon(character: Character) {
         val starResId = if (favoritesViewModel.isFavorite(character)) {
             R.drawable.ic_star
         } else {

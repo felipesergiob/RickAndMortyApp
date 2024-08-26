@@ -43,9 +43,10 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         editor.apply()
     }
 
-    private fun loadFavorites(): List<Character> {
+    fun loadFavorites(): List<Character> {
         val jsonString = sharedPreferences.getString("favorites_list", null) ?: return emptyList()
         val type = object : TypeToken<List<Character>>() {}.type
+        Log.i("FavoritesViewModel", "teste")
         return Gson().fromJson(jsonString, type)
     }
 

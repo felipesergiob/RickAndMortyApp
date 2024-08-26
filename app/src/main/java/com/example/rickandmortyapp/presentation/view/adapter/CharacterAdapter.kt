@@ -3,7 +3,6 @@ package com.example.rickandmortyapp.presentation.view.adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.rickandmortyapp.R
@@ -23,7 +22,7 @@ class CharacterAdapter(
     private val VIEW_TYPE_DEFAULT = 1
     private val VIEW_TYPE_FAVORITE = 2
 
-    fun updateCharacterList(newCharacters: LiveData<List<Character>>){
+    fun updateCharacterList(newCharacters: List<Character>) {
         characters = newCharacters
         notifyDataSetChanged()
     }
@@ -84,7 +83,6 @@ class CharacterAdapter(
         }
     }
 
-
     inner class FavoriteViewHolder(private val binding: ItemFavoriteCharacterBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(character: Character) {
             binding.favoriteCharacterName.text = character.name
@@ -100,6 +98,7 @@ class CharacterAdapter(
 
             binding.favoriteStarIcon.setOnClickListener {
                 favoritesViewModel.removeFromFavorites(character)
+                // Notify dataset change
                 notifyItemRemoved(adapterPosition)
             }
         }
