@@ -5,7 +5,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/launchScreenFragment">
 
-    <!-- Fragmento de Tela Inicial (Launch Screen) -->
     <fragment
         android:id="@+id/launchScreenFragment"
         android:name="com.example.rickandmortyapp.presentation.view.fragment.LaunchScreenFragment"
@@ -15,7 +14,6 @@
             app:destination="@id/homeFragment" />
     </fragment>
 
-    <!-- Fragmento da Tela Principal (Home) -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.rickandmortyapp.view.HomeFragment"
@@ -27,13 +25,11 @@
                 android:name="characterId"
                 app:argType="integer" />
         </action>
-        <!-- Adicionando a navegação para o FavoritesFragment -->
         <action
             android:id="@+id/action_homeFragment_to_favoritesFragment"
             app:destination="@id/favoritesFragment" />
     </fragment>
 
-    <!-- Fragmento de Detalhes -->
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.example.rickandmortyapp.view.DetailFragment"
@@ -43,7 +39,6 @@
             app:argType="integer" />
     </fragment>
 
-    <!-- Fragmento de Favoritos -->
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.rickandmortyapp.presentation.view.fragment.FavoritesFragment"

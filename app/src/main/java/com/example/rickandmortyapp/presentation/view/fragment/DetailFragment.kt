@@ -37,9 +37,9 @@ class DetailFragment : Fragment() {
             character?.let {
                 binding.nameTextView.text = character.name
                 binding.detailsTextView.text = """
-                    gender: ${character.gender}
-                    species: ${character.species}
-                    status: ${character.status}
+                    gender: ${character.gender.uppercase()}
+                    species: ${character.species.uppercase()}
+                    status: ${character.status.uppercase()}
                     created: ${character.created}
                 """.trimIndent()
 
