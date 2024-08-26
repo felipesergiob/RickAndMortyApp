@@ -20,25 +20,8 @@ class CharacterViewModel(
     private val service: RickAndMortyService
 ) : ViewModel() {
 
-    private val _characterData = MutableLiveData<Character>()
-    val characterData: LiveData<Character> get() = _characterData
-
     private val _charactersList = MutableLiveData<List<Character>>()
     val charactersList: LiveData<List<Character>> get() = _charactersList
-
-    fun fetchCharacterData(characterId: Int) {
-        viewModelScope.launch {
-            try {
-                val response = withContext(Dispatchers.IO) {
-                    service.getSingleCharacterById(characterId)
-                }
-                val character = response.toDomainModel()
-                _characterData.postValue(character)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     fun fetchAllCharacters() {
         viewModelScope.launch {

@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
                 characters,
                 favoritesViewModel,
                 onItemClick = { character ->
-                    val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(character.id.toInt())
+                    val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(character)
                     findNavController().navigate(action)
                 },
                 allowFavoriteToggle = false

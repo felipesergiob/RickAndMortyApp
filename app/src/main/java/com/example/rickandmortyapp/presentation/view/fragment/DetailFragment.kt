@@ -33,39 +33,34 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        characterViewModel.characterData.observe(viewLifecycleOwner) { character ->
-            character?.let {
-                binding.nameTextView.text = character.name
-                binding.detailsTextView.text = """
-                    gender: ${character.gender.uppercase()}
-                    species: ${character.species.uppercase()}
-                    status: ${character.status.uppercase()}
-                    created: ${character.created}
-                """.trimIndent()
+        val character = args.character
+        binding.nameTextView.text = character.name
+        binding.detailsTextView.text = """
+            gender: ${character.gender.uppercase()}
+            species: ${character.species.uppercase()}
+            status: ${character.status.uppercase()}
+            created: ${character.created}
+        """.trimIndent()
 
-                Glide.with(this)
-                    .load(character.image)
-                    .into(binding.characterImageView)
+        Glide.with(this)
+            .load(character.image)
+            .into(binding.characterImageView)
 
-                updateStarIcon(it)
+        updateStarIcon(character)
 
-                binding.starImageView.setOnClickListener {
-                    if (favoritesViewModel.isFavorite(character)) {
-                        favoritesViewModel.removeFromFavorites(character)
-                        binding.starImageView.setImageResource(R.drawable.ic_star_empty)
-                    } else {
-                        favoritesViewModel.addToFavorites(character)
-                        binding.starImageView.setImageResource(R.drawable.ic_star)
-                    }
-                }
+        binding.starImageView.setOnClickListener {
+            if (favoritesViewModel.isFavorite(character)) {
+                favoritesViewModel.removeFromFavorites(character)
+                binding.starImageView.setImageResource(R.drawable.ic_star_empty)
+            } else {
+                favoritesViewModel.addToFavorites(character)
+                binding.starImageView.setImageResource(R.drawable.ic_star)
             }
         }
 
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
-
-        characterViewModel.fetchCharacterData(args.characterId)
     }
 
     private fun updateStarIcon(character: com.example.rickandmortyapp.domain.model.Character) {

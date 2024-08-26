@@ -5,11 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.rickandmortyapp.R
-import kotlinx.coroutines.*
+import com.example.rickandmortyapp.viewmodel.CharacterViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class LaunchScreenFragment : Fragment() {
+
+    private val characterViewModel: CharacterViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -20,9 +27,17 @@ class LaunchScreenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(2000)
-            findNavController().navigate(R.id.action_launchScreenFragment_to_homeFragment)
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                characterViewModel.fetchAllCharacters()
+            }
+
+            characterViewModel.charactersList.observe(viewLifecycleOwner) { characters ->
+                if (characters.isNotEmpty()) {
+                    findNavController().navigate(R.id.action_launchScreenFragment_to_homeFragment)
+                }
+            }
         }
     }
 }

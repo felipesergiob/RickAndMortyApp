@@ -22,8 +22,8 @@
             android:id="@+id/action_homeFragment_to_detailFragment"
             app:destination="@id/detailFragment">
             <argument
-                android:name="characterId"
-                app:argType="integer" />
+                android:name="character"
+                app:argType="com.example.rickandmortyapp.domain.model.Character" />
         </action>
         <action
             android:id="@+id/action_homeFragment_to_favoritesFragment"
@@ -35,8 +35,8 @@
         android:name="com.example.rickandmortyapp.view.DetailFragment"
         tools:layout="@layout/fragment_detail">
         <argument
-            android:name="characterId"
-            app:argType="integer" />
+            android:name="character"
+            app:argType="com.example.rickandmortyapp.domain.model.Character" />
     </fragment>
 
     <fragment
