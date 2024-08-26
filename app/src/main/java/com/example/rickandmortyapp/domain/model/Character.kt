@@ -13,5 +13,4 @@ data class Character(
     val episode: List<String>,
     val url: String,
     var created: String,
-    var isFavorite: Boolean = false
 )

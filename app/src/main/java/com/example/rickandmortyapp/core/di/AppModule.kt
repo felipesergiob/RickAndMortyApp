@@ -5,8 +5,8 @@ import com.example.rickandmortyapp.data.repository.RemoteDataRepository
 import com.example.rickandmortyapp.data.repository.RemoteDataRepositoryImpl
 import com.example.rickandmortyapp.domain.usecase.GetCharactersUseCase
 import com.example.rickandmortyapp.service.RickAndMortyService
-import com.example.rickandmortyapp.presentation.viewmodel.CharacterViewModel
-import com.example.rickandmortyapp.presentation.viewmodel.FavoritesViewModel
+import com.example.rickandmortyapp.viewmodel.CharacterViewModel
+import com.example.rickandmortyapp.viewmodel.FavoritesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -24,6 +24,6 @@ val appModule = module {
     single<RemoteDataRepository> { RemoteDataRepositoryImpl(get()) }
     factory { GetCharactersUseCase(get()) }
 
-    viewModel { CharacterViewModel(get()) }
+    viewModel { CharacterViewModel() }
     viewModel { FavoritesViewModel(get()) }
 }

@@ -1,19 +1,23 @@
-package com.example.rickandmortyapp.presentation.viewmodel
+package com.example.rickandmortyapp.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rickandmortyapp.data.model.CharacterDTO
 import com.example.rickandmortyapp.domain.model.Character
-import com.example.rickandmortyapp.domain.usecase.GetCharactersUseCase
+import com.example.rickandmortyapp.domain.model.Location
+import com.example.rickandmortyapp.domain.model.Origin
+import com.example.rickandmortyapp.service.ApiClient
+import com.example.rickandmortyapp.service.RickAndMortyService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
+import java.util.Date
 
-class CharacterViewModel(
-    private val getCharactersUseCase: GetCharactersUseCase
-) : ViewModel() {
+class CharacterViewModel : ViewModel() {
 
     private val _characterData = MutableLiveData<Character>()
     val characterData: LiveData<Character> get() = _characterData
@@ -21,23 +25,55 @@ class CharacterViewModel(
     private val _charactersList = MutableLiveData<List<Character>>()
     val charactersList: LiveData<List<Character>> get() = _charactersList
 
+    private val service: RickAndMortyService by lazy {
+        ApiClient.retrofit.create(RickAndMortyService::class.java)
+    }
+
     fun fetchCharacterData(characterId: Int) {
         viewModelScope.launch {
-            getCharactersUseCase().collect { characters ->
-                val character = characters.firstOrNull { it.id == characterId }
-                character?.let {
-                    _characterData.postValue(it)
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    service.getSingleCharacterById(characterId)
                 }
+                val character = response.toDomainModel()
+                _characterData.postValue(character)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
     fun fetchAllCharacters() {
         viewModelScope.launch {
-            getCharactersUseCase().collect { characters ->
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    service.getAllCharacters()
+                }
+                val characters = response.results.map { characterDTO ->
+                    characterDTO.toDomainModel()
+                }
                 _charactersList.postValue(characters)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
+    }
+
+    private fun CharacterDTO.toDomainModel(): Character {
+        return Character(
+            id = this.id,
+            name = this.name,
+            status = this.status,
+            species = this.species,
+            type = this.type,
+            gender = this.gender,
+            origin = Origin(this.origin.name, this.origin.url),
+            location = Location(this.location.name, this.location.url),
+            image = this.image,
+            episode = this.episode,
+            url = this.url,
+            created = formatDate(this.created)
+        )
     }
 
     private fun formatDate(dateString: String): String {
@@ -45,6 +81,10 @@ class CharacterViewModel(
         inputFormat.timeZone = java.util.TimeZone.getTimeZone("UTC")
         val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val date: Date? = inputFormat.parse(dateString)
-        return if (date != null) outputFormat.format(date) else "Data inválida"
+        return if (date != null) {
+            outputFormat.format(date)
+        } else {
+            "Data inválida"
+        }
     }
 }

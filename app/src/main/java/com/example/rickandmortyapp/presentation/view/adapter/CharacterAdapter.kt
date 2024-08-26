@@ -1,6 +1,5 @@
-package com.example.rickandmortyapp.presentation.view.adapter
+package com.example.rickandmortyapp.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,11 +7,11 @@ import com.bumptech.glide.Glide
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.databinding.ItemCharacterBinding
 import com.example.rickandmortyapp.databinding.ItemFavoriteCharacterBinding
+import com.example.rickandmortyapp.viewmodel.FavoritesViewModel
 import com.example.rickandmortyapp.domain.model.Character
-import com.example.rickandmortyapp.presentation.viewmodel.FavoritesViewModel
 
 class CharacterAdapter(
-    private var characters: List<Character>,
+    private val characters: List<Character>,
     private val favoritesViewModel: FavoritesViewModel,
     private val onItemClick: ((Character) -> Unit)? = null,
     private val allowFavoriteToggle: Boolean = true,
@@ -21,11 +20,6 @@ class CharacterAdapter(
 
     private val VIEW_TYPE_DEFAULT = 1
     private val VIEW_TYPE_FAVORITE = 2
-
-    fun updateCharacterList(newCharacters: List<Character>) {
-        characters = newCharacters
-        notifyDataSetChanged()
-    }
 
     override fun getItemViewType(position: Int): Int {
         return if (isFavoriteView) VIEW_TYPE_FAVORITE else VIEW_TYPE_DEFAULT
@@ -62,7 +56,8 @@ class CharacterAdapter(
                 .into(binding.characterImage)
 
             val isFavorite = favoritesViewModel.isFavorite(character)
-            binding.starIcon.setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_empty)
+            val starResId = if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_empty
+            binding.starIcon.setImageResource(starResId)
 
             binding.root.setOnClickListener {
                 onItemClick?.invoke(character)
@@ -72,12 +67,11 @@ class CharacterAdapter(
                 binding.starIcon.setOnClickListener {
                     if (isFavorite) {
                         favoritesViewModel.removeFromFavorites(character)
-                        Log.d("CharacterAdapter", "Removed from favorites: ${character.name}")
+                        binding.starIcon.setImageResource(R.drawable.ic_star_empty)
                     } else {
                         favoritesViewModel.addToFavorites(character)
-                        Log.d("CharacterAdapter", "Added to favorites: ${character.name}")
+                        binding.starIcon.setImageResource(R.drawable.ic_star)
                     }
-                    notifyItemChanged(adapterPosition)
                 }
             }
         }
@@ -98,7 +92,6 @@ class CharacterAdapter(
 
             binding.favoriteStarIcon.setOnClickListener {
                 favoritesViewModel.removeFromFavorites(character)
-                // Notify dataset change
                 notifyItemRemoved(adapterPosition)
             }
         }
